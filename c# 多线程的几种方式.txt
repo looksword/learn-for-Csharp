@@ -1,0 +1,147 @@
+c# 多线程的几种方式
+
+
+1.什么是线程？
+
+进程作为操作系统执行程序的基本单位，拥有应用程序的资源，进程包含线程，进程的资源被线程共享，线程不拥有资源。
+
+
+
+2.前台线程和后台线程的区别？
+
+程序关闭时，后台线程直接关闭，但前台线程会执行完后关闭。
+通过Thread类新建线程默认为前台线程。其他方式创建的都是后台线程。
+
+
+
+多线程的几种方式
+
+一. 异步多线程
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("----------主程序开始，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+            for(int i = 0; i< 5;i++)
+            {
+                Action<string> action = t =>
+                {
+                    for(int k = 0; k< 1000000000;k++)
+                    { }
+                    Console.WriteLine("当前参数是{0},当前线程是{1}",t,Thread.CurrentThread.ManagedThreadId);
+                };
+
+                action.BeginInvoke("参数是" + i, null, null);
+            }
+            Console.WriteLine("----------主程序结束，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+            Console.Read();
+        }
+    }
+
+
+
+二. Threads线程
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("----------主程序开始，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+            for(int i = 0; i< 5;i++)
+            {
+                ParameterizedThreadStart threadStart = t =>
+                {
+                    for (int k = 0; k < 1000000000; k++)
+                    { }
+                    Console.WriteLine("当前参数是{0},当前线程是{1}", t, Thread.CurrentThread.ManagedThreadId);
+                };
+
+                Thread thread = new Thread(threadStart);
+
+                thread.Start(i);
+            }
+            Console.WriteLine("----------主程序结束，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+
+            Console.Read();
+        }
+
+
+
+三. ThreadPool线程池
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("----------主程序开始，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+            for(int i = 0; i< 5;i++)
+            {
+                WaitCallback waitCallback = t =>
+                {
+                    for (int k = 0; k < 1000000000; k++)
+                    { }
+                    Console.WriteLine("当前参数是{0},当前线程是{1}", t, Thread.CurrentThread.ManagedThreadId);
+                };
+
+                ThreadPool.QueueUserWorkItem(waitCallback, i);
+            }
+            Console.WriteLine("----------主程序结束，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+
+            Console.Read();
+        }
+
+
+
+四. Task
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("----------主程序开始，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+
+            TaskFactory taskFactory = new TaskFactory();
+
+            for (int i = 0; i< 5;i++)
+            {
+                Action<object> action = t =>
+                {
+                    for (int k = 0; k < 1000000000; k++)
+                    { }
+                    Console.WriteLine("当前参数是{0},当前线程是{1}", t, Thread.CurrentThread.ManagedThreadId);
+                };
+
+                taskFactory.StartNew(action,i);
+            }
+            Console.WriteLine("----------主程序结束，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+
+            Console.Read();
+        }
+
+
+
+五. Parallel
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("----------主程序开始，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+
+
+            Action action1 = () =>
+            {
+                for (int k = 0; k < 1000000000; k++)
+                { }
+                Console.WriteLine("当前参数是1,当前线程是{0}", Thread.CurrentThread.ManagedThreadId);
+            };
+            Action action2 = () =>
+            {
+                for (int k = 0; k < 1000000000; k++)
+                { }
+                Console.WriteLine("当前参数是2,当前线程是{0}", Thread.CurrentThread.ManagedThreadId);
+            };
+            Action action3 = () =>
+            {
+                for (int k = 0; k < 1000000000; k++)
+                { }
+                Console.WriteLine("当前参数是3,当前线程是{0}", Thread.CurrentThread.ManagedThreadId);
+            };
+
+            Parallel.Invoke(action1, action2, action3);
+
+            Console.WriteLine("----------主程序结束，线程ID是{0}-----------------", Thread.CurrentThread.ManagedThreadId);
+
+            Console.Read();
+        }

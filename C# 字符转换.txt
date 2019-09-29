@@ -1,0 +1,44 @@
+
+public static byte[] GetAsciiBytes(params byte[] numbers)
+{
+	string asciiStr = "";
+	foreach (byte b in numbers)
+	{
+		asciiStr += b.ToString("X2");
+	}
+	return Encoding.ASCII.GetBytes(asciiStr);
+}
+
+
+
+
+
+public static byte[] GetAsciiBytes(params ushort[] numbers)
+{
+	string asciiStr = "";
+	foreach (ushort u in numbers)
+	{
+		asciiStr += u.ToString("X4");
+	}
+	return Encoding.ASCII.GetBytes(asciiStr);
+}
+
+
+
+
+
+public static byte[] HexToBytes(byte[] hex)
+{
+	if (hex == null)
+		throw new ArgumentNullException("hex");
+
+	if (hex.Length % 2 != 0)
+		throw new FormatException(Resources.HexCharacterCountNotEven);
+
+	byte[] bytes = new byte[hex.Length / 2];
+
+	for (int i = 0; i < bytes.Length; i++)
+		bytes[i] = Convert.ToByte("" + (char)hex[i * 2] + (char)hex[i * 2 + 1], 16);
+
+	return bytes;
+}

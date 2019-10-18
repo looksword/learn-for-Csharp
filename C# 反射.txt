@@ -1,0 +1,75 @@
+using System.Reflection;
+using System.Runtime.Remoting;
+
+
+
+LoadAssembly();
+protocolComboBox.DisplayMember = "Name";
+foreach (object o in protocolComboBox.Items)
+{
+	string name = o.GetType().Name;
+	if (name == gplc.PlcAccessorName)
+	{
+		protocolComboBox.SelectedItem = o;
+		break;
+	}
+}
+
+
+Type type = protocolComboBox.SelectedItem.GetType();
+gplc.AccessorAssembly = type.Assembly.FullName;
+gplc.AccessorFullName = type.FullName;
+
+
+
+
+// 摘要:
+//     使用命名的程序集和默认构造函数，创建名称已指定的类型的实例。
+//
+// 参数:
+//   assemblyName:
+//     将在其中查找名为 typeName 的类型的程序集的名称。 
+//	   有关详细信息，请参阅“备注”部分。 如果 assemblyName 为 null，则搜索正在执行的程序集。
+//
+//   typeName:
+//     首选类型的完全限定名。
+//
+// 返回结果:
+//     要访问新创建的实例则必须解包的句柄。
+ObjectHandle objHandle = Activator.CreateInstance(AccessorAssembly, AccessorFullName);
+PlcAccessor = (PlcAccessor)objHandle.Unwrap();
+
+
+
+
+
+
+
+
+
+
+
+private void LoadAssembly()
+{
+	Assembly asm = Assembly.GetEntryAssembly();
+	string scanAsmPath = System.IO.Path.GetDirectoryName(asm.Location);
+	string[] fileList = System.IO.Directory.GetFiles(scanAsmPath, "*.dll", System.IO.SearchOption.AllDirectories);
+	protocolComboBox.Items.Clear();
+	protocolComboBox.DisplayMember = "Name";
+	foreach (string filePath in fileList)
+	{
+		try
+		{
+			asm = Assembly.LoadFile(filePath);
+			foreach (Type type in asm.GetTypes())
+			{
+				if (type.IsSubclassOf(typeof(PlcAccessor)) &&
+					(type.Name != "PlcAccessor"))
+				{
+					protocolComboBox.Items.Add(type.GetConstructor(Type.EmptyTypes).Invoke(new object[0]));
+				}
+			}
+		}
+		catch (Exception) { }
+	}
+}

@@ -42,3 +42,16 @@ public static byte[] HexToBytes(byte[] hex)
 
 	return bytes;
 }
+
+
+
+字节顺序 2143
+
+
+ushort[] Dewdata = Modbus.ReadHoldingRegisters(0x01, 0x00, 6);
+byte[] bytes = new byte[4];
+bytes[2] = (byte)(Dewdata[1] & 0xFF);
+bytes[3] = (byte)(Dewdata[1] >> 8);
+bytes[0] = (byte)(Dewdata[0] & 0xFF);
+bytes[1] = (byte)(Dewdata[0] >> 8);
+float tem = BitConverter.ToSingle(bytes, 0);

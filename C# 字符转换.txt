@@ -55,3 +55,19 @@ bytes[3] = (byte)(Dewdata[1] >> 8);//高位
 bytes[0] = (byte)(Dewdata[0] & 0xFF);
 bytes[1] = (byte)(Dewdata[0] >> 8);
 float tem = BitConverter.ToSingle(bytes, 0);
+
+
+
+
+
+bool[]  ->  byte[]
+
+bool[] values;
+byte[] newvalues = values.Select(m => m ? (byte)0x01 : (byte)0x00).ToArray()
+
+
+
+
+
+
+

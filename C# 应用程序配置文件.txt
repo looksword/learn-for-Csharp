@@ -1,0 +1,53 @@
+
+1.APP.config
+	<?xml version="1.0"?>
+	<configuration>
+		<connectionStrings>
+			<!--<add name="EDCS" connectionString="Data Source=SOLAR;Persist Security Info=False;User ID=cimmax;Password=cimmax;Unicode=True" providerName="System.Data.OracleClient"/>-->
+		</connectionStrings>
+		<appSettings>
+			<add key="Standalone" value="false"/><!--是否允许单独运行，不经由后台服务启动-->
+			<add key="LogData" value="false"/><!--是否记录采集的数据-->
+			<add key="EnableWriteFile" value="true"/><!--开关文件输出-->
+			<add key="MaxFileKiloByte" value="10000"/><!--文件最大千字节数-->
+			<add key="MaxFileNum" value="10"/><!--每主题最大文件数-->
+			<add key="WriteFileInterval" value="2000"/><!--写文件间隔-->
+			<add key="FileNameSuffix" value="txt"/><!--文件名后缀-->
+			<add key="OutputPath" value=".\Data"/><!--文件输出位置-->
+			<add key="LogDataBlockTime" value="false"/><!--是否记录数据块的变动时间点-->
+			<add key="LogJsonData" value="false"/><!--是否记录对外发送的Json格式数据-->
+			<add key="CommandServerPort" value="8016"/><!--指令服务端口-->
+			<add key="BackupPort" value="9999"/><!--备份服务通讯端口号-->
+			<add key="BackupHBInterval" value="3"/><!--服务器主机心跳间隔-->
+			<add key="BackupLifeTime" value="30"/><!--备份服务心跳间隔-->
+			<add key="DevID" value="3"/><!--服务器地址号-->
+			<add key="DevIPs" value="192.168.1.91:1$192.168.11.101:2$192.168.1.199:3"/><!--备份服务器列表-->
+			<add key="ServerIPs" value="192.168.1.91:9998$192.168.11.101:7785"/><!--被通知的服务器列表-->
+		</appSettings>
+	</configuration>
+
+
+
+2.program.cs
+	private static bool standalone = false;
+	private static int devID = 0;
+	private static int udpPort = 9999;
+	private static int lifeTime = 30;       // 生命周期,单位秒
+	private static int hbInterval = 3;      // 心跳时间间隔,单位秒
+		
+		
+	try { standalone = bool.Parse(ConfigurationManager.AppSettings["Standalone"]); }
+	catch { }
+
+	try { devID = int.Parse(ConfigurationManager.AppSettings["DevID"]); }
+	catch { }
+
+	try { udpPort = int.Parse(ConfigurationManager.AppSettings["BackupPort"]); }
+	catch { udpPort = 9999; }
+
+	try { hbInterval = int.Parse(ConfigurationManager.AppSettings["BackupHBInterval"]); }
+	catch { hbInterval = 3; }
+
+	try { lifeTime = int.Parse(ConfigurationManager.AppSettings["BackupLifeTime"]); }
+	catch { lifeTime = 30; }
+

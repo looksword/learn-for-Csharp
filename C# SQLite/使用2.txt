@@ -1,0 +1,53 @@
+
+
+
+
+
+string sqlText = "CREATE TABLE Equipments(ID varchar(60) primary key not null, Name varchar(60), ConfigFile varchar(800), SettingStr varchar(800));";
+try
+{
+	BizPortal.Instance.ExecSQL("", sqlText, null);//创建设备表
+}
+catch { }
+
+
+
+
+
+sqlText = "SELECT ID, Name, ConfigFile, SettingStr FROM Equipments";
+DataTable dt = BizPortal.Instance.QuerySQL("", sqlText, null);//获取ID、Name、ConfigFile、SettingStr组成的表
+foreach (DataRow dr in dt.Rows)
+{
+	string id = (string)dr["ID"];
+	string name = (string)dr["Name"];
+	string cfgFile = (string)dr["ConfigFile"];
+	string setting = (string)dr["SettingStr"];
+}
+
+
+
+
+
+string sqlText = "INSERT INTO Equipments (ID, Name, ConfigFile, SettingStr) " + "VALUES('" + id + "', '" + name + "', '.\\Cfg\\" + name + ".cfg', '" + setting + "')";
+try
+{
+	BizPortal.Instance.ExecSQL("", sqlText, null);//插入设备到设备表
+}
+catch { }
+
+
+
+
+
+string sqltext = "delete from equipments where id = '" + id + "'";
+try
+{
+    bizportal.instance.execsql("", sqltext, null);
+}
+catch { }
+
+
+
+
+
+

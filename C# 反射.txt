@@ -22,7 +22,7 @@ gplc.AccessorFullName = type.FullName;
 
 
 
-
+// Activator.CreateInstance
 // 摘要:
 //     使用命名的程序集和默认构造函数，创建名称已指定的类型的实例。
 //
@@ -40,7 +40,14 @@ ObjectHandle objHandle = Activator.CreateInstance(AccessorAssembly, AccessorFull
 PlcAccessor = (PlcAccessor)objHandle.Unwrap();
 
 
-
+/// <summary>
+/// 程序集
+/// </summary>
+public string AccessorAssembly = "";
+/// <summary>
+/// 类型名称
+/// </summary>
+public string AccessorFullName = "";
 
 
 

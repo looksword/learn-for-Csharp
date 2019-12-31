@@ -69,5 +69,40 @@ byte[] newvalues = values.Select(m => m ? (byte)0x01 : (byte)0x00).ToArray()
 
 
 
+/// <summary>
+/// 获取ushort的第bitIndex位bool
+/// </summary>
+/// <param name="source"></param>
+/// <param name="bitIndex">从0开始</param>
+/// <returns></returns>
+private bool GetBitOfUshort(ushort source, int bitIndex)
+{
+	ushort mask = 1;
+	mask = (ushort)(mask << bitIndex);
+	source = (ushort)(source & mask);
+	return ((source == 0) ? false : true);
+}
 
+/// <summary>
+/// 修改ushort的第bitIndex位bool
+/// </summary>
+/// <param name="source"></param>
+/// <param name="bitIndex">从0开始</param>
+/// <param name="value"></param>
+/// <returns></returns>
+private ushort SetBitOfUshort(ushort source, int bitIndex, bool value)
+{
+	ushort mask = 1;
+	mask = (ushort)(mask << bitIndex);
+	if (value)
+	{
+		source = (ushort)(source | mask);
+	}
+	else
+	{
+		mask = (ushort)(~mask);//取反
+		source = (ushort)(source & mask);
+	}
+	return source;
+}
 

@@ -1,0 +1,11 @@
+
+
+
+
+
+
+
+
+Random ra=new Random();//（系统自动选取当前时前作随机种子）
+Random ran = new Random(unchecked((int)DateTime.Now.Ticks));//
+double RandKey = ran.NextDouble();

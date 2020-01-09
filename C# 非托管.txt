@@ -1,0 +1,16 @@
+非托管
+
+
+
+继承IDisposable类
+
+实现Dispose()
+
+
+
+销毁：
+if (实例 != null)
+{
+	try { using (实例) { } }
+	finally { 实例 = null; }
+}

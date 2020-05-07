@@ -1,0 +1,98 @@
+1.tcp
+2.kafka
+
+
+
+
+
+/// <summary>
+/// TCP短连接
+/// </summary>
+/// <param name="bytes"></param>
+/// <param name="IP"></param>
+/// <param name="Port">默认值为10086</param>
+/// <returns></returns>
+static public int SendByteByTcp(byte[] bytes, string IP, int Port = 10086)
+{
+	TcpClient tcp = null;
+	try
+	{
+		//lock (syncObj)
+		{
+			tcp = new TcpClient();
+
+			var result = tcp.BeginConnect(IP, Port, null, null);
+			var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(2));// 两秒未连接即弹出异常
+			if (!success)
+			{
+				throw new Exception(" Failed to transport data ");
+			}
+
+			NetworkStream ns = tcp.GetStream();
+
+			//报文结尾 ETX:0x03
+			byte[] newbytes = new byte[bytes.Length + 1];
+			Array.Copy(bytes, newbytes, bytes.Length);
+			newbytes[bytes.Length] = 0x03;
+
+			ns.WriteTimeout = 2000; // 传送设置超时2秒
+			ns.Write(newbytes, 0, newbytes.Length);
+			ns.Close();
+
+			if (tcp.Client.Connected)
+			{
+				tcp.EndConnect(result);
+			}
+		}
+	}
+	catch (Exception ex)
+	{
+		throw ex;
+	}
+	finally
+	{
+		if(tcp != null)
+		{
+			tcp.Close();
+		}
+	}
+
+	return 0;
+}
+
+
+
+
+
+
+
+/// <summary>
+/// 发送数据至kafka
+/// </summary>
+/// <param name="msg"></param>
+/// <returns></returns>
+private async Task SendToKafka(string msg)
+{
+	if (kafkaSensorProducer == null)
+	{
+		var options = new KafkaOptions(new Uri("http://" + dcConfig.kafkaIP + ":" + dcConfig.kafkaPort.ToString()));
+		options.MaximumReconnectionTimeout = new TimeSpan(0, 0, 20);
+		var router = new BrokerRouter(options);
+		kafkaSensorProducer = new Producer(router);
+	}
+
+	List<KafkaNet.Protocol.Message> msgArr = new List<KafkaNet.Protocol.Message>();
+	msgArr.Add(new KafkaNet.Protocol.Message(msg));//, dcCfg.kafkaMsgKey));
+	MessageCodec codec = MessageCodec.CodecNone;
+	var result = await kafkaSensorProducer.SendMessageAsync("RSSensor" + dcConfig.kafkaTopicGroupID, msgArr.ToArray(), 1, null, codec);
+	if (result == null || result.Count <= 0 || result[0].Error != 0)
+	{
+		MsgOut("Error", "发送Kafka失败", 1, true);
+	}
+}
+
+
+
+
+
+

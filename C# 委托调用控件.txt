@@ -1,0 +1,16 @@
+当不同线程时，需要调用控件时，可以使用委托
+
+
+
+
+其他线程的函数
+{
+	if (this.InvokeRequired)
+	{
+		this.Invoke(new MethodInvoker(delegate
+			{
+				this.控件  调用
+			}
+		));
+	}
+}

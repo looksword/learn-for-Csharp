@@ -1,0 +1,49 @@
+新建一个Windows Service并将项目名称改为“MyWindowsService”
+
+在解决方案资源管理器内修改Service1.cs名字并点击查看代码
+
+using System;
+using System.ServiceProcess;
+using System.IO;
+
+namespace MyWindowsService
+{
+    public partial class MyService : ServiceBase
+    {
+        public MyService()
+        {
+            InitializeComponent();
+        }
+
+        string filePath = @"D:\MyServiceLog.txt";
+
+        protected override void OnStart(string[] args)
+        {
+            using (FileStream stream = new FileStream(filePath,FileMode.Append))
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.WriteLine($"{DateTime.Now},服务启动！");
+            }
+        }
+
+        protected override void OnStop()
+        {
+            using (FileStream stream = new FileStream(filePath, FileMode.Append))
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.WriteLine($"{DateTime.Now},服务停止！");
+            }
+        }
+    }
+}
+
+
+双击项目“MyWindowsService”进入“MyService”设计界面，在空白位置右击鼠标弹出上下文菜单，选中“添加安装程序”
+
+此时软件会生成两个组件，分别为“serviceInstaller1”及“serviceProcessInstaller1”
+
+点击“serviceInstaller1”，在“属性”窗体将ServiceName改为MyService，Description改为我的服务，StartType保持为Manual
+
+点击“serviceProcessInstaller1”，在“属性”窗体将Account改为LocalSystem（服务属性系统级别）
+
+鼠标右键点击项目“MyWindowsService”，在弹出的上下文菜单中选择“生成”按钮

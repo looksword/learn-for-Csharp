@@ -1,0 +1,11 @@
+
+
+//DM_type	:	一个ComboBox
+DM_type.DataSource = System.Enum.GetNames(typeof(DataMatrixEncodeMode));
+
+
+//example	:	一个实例
+example.DataMatrixEncodeMode = (DataMatrixEncodeMode)Enum.Parse(typeof(DataMatrixEncodeMode), DM_type.SelectedIndex.ToString());
+
+
+

@@ -1,0 +1,16 @@
+FileQueue fileQueue = new LsLib.FileQueue();
+
+// 插入待处理队列
+fileQueue.Push(new string[] { "业务数据内容，字符串（中间不能有换行）" });
+
+// 清空队列
+fileQueue.Clear();
+
+// 队列待处理数量
+fileQueue.Count();
+
+// 获取待处理数据
+fileQueue.GetList(10);
+
+// 设置最早的数据处理完成
+fileQueue.Pop(10);

@@ -1,0 +1,61 @@
+using System.Net.Sockets;
+using System.Net;
+
+
+public string IP = "192.168.1.1";
+public int Port = 502;
+public int thisPort = 11000;
+private UdpClient udpclient = null;
+private UdpClient UDPClient
+{
+	get
+	{
+		if (udpclient != null) return udpclient;
+		udpclient = new UdpClient(thisPort);
+		remotePoint = new IPEndPoint(IPAddress.Parse(IP), Port);
+		return udpclient;
+	}
+}
+private IPEndPoint remotePoint = new IPEndPoint(IPAddress.Parse("192.168.1.1"), 502);
+
+
+
+private void Disconnect()
+{
+	if (udpclient != null)
+	{
+		udpclient.Close();
+		udpclient = null;
+	}
+}
+
+	byte[] receivedata = null;
+	if (UDPClient.Available > 0)
+	{
+		receivedata = UDPClient.Receive(ref remotePoint);
+		if (receivedata != null)
+		{
+			for (int i = 0; i < receivedata.Length; i++)
+			{
+				dataList.Add(receivedata[i]);
+			}
+		}
+	}
+
+
+public void SendToPrint(string code)
+{
+	byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(code);
+	List<byte> Sendbyte = new List<byte>();
+	Sendbyte.Add(0xaa);
+	Sendbyte.Add(0xa5);
+	Sendbyte.Add((byte)byteArray.Length);
+	Sendbyte.AddRange(byteArray);
+	byte[] noCRC = Sendbyte.ToArray();
+	byte CRC = CRC8.CRC(noCRC);
+	Sendbyte.Add(CRC);
+	byte[] Send = Sendbyte.ToArray();
+	UDPClient.Send(Send, Send.Length, remotePoint);
+	isTransfer = true;
+}
+

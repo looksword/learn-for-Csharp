@@ -1,0 +1,11 @@
+//MessageBox.ShowShow(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon);
+
+
+//使用
+if(MessageBox.Show("确定要修改?","提示",MessageBoxButtons.OKCancel,MessageBoxIcon.Exclamation) == DialogResult.Cancel)
+{
+	return;
+}
+
+
+
